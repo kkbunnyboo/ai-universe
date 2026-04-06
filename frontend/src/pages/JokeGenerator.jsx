@@ -31,6 +31,7 @@ export default function JokeGenerator() {
   const [stats, setStats] = useState({ total: 0, categories: {} });
   const [activeTab, setActiveTab] = useState('generator'); // 'generator' | 'favorites'
   const [safeMode, setSafeMode] = useState(true);
+  const [toast, setToast] = useState(null);
 
   const showToast = (msg) => {
     setToast(msg);
