@@ -1,37 +1,37 @@
-# ai-universe
-
-This is an initial FastAPI backend application.
-
-## main.py
-
-```python
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import uvicorn
 
-app = FastAPI()
+from src.config import settings
+from src.api.router import api_router
+
+app = FastAPI(
+    title="AI Universe",
+    description="Build your own AI universe platform",
+    version="1.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(api_router, prefix="/api/v1")
+
 
 @app.get("/")
 async def root():
-    return {"message": "Hello, World!"}
-```
+    return JSONResponse({"message": "Welcome to AI Universe 🌌"})
 
-## config.py
 
-```python
-# Configuration settings for the FastAPI app
+@app.get("/health")
+async def health_check():
+    return JSONResponse({"status": "healthy"})
 
-DATABASE_URL = "postgresql://user:password@localhost/db"
-```
 
-## database.py
-
-```python
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-
-DATABASE_URL = "postgresql://user:password@localhost/db"
-
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-```
+if __name__ == "__main__":
+    uvicorn.run(app, host=settings.HOST, port=settings.PORT)
